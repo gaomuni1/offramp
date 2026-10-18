@@ -1,0 +1,38 @@
+# 所有项都有默认值,不改也能跑。改了以后下一条命令生效。
+
+okx:
+  spot_inst: ETH-USDT
+  swap_inst: ETH-USDT-SWAP
+  leverage: 1
+  margin_mode: cross
+  hedge_slippage_bps: 15        # 对冲 IOC 单最多比盘口差多少(1 bps = 0.01%)
+
+osl:                            # 只读公开行情,不需要 key
+  rest_base: https://trade-hk.osl.com
+  symbol: ETHUSD
+  taker_fee: 0.0005             # Pro Trade 吃单 0.05%
+  min_qty: 0.00052              # OSL ETHUSD 最小下单量
+  qty_step: 0.00001
+
+buy:                            # P1:OKX maker 买 + 同步开空
+  price_mode: join              # join = 挂在买一;improve = 价差够大时比买一高一个价格步长
+  max_entry_basis_bps: 20       # 现货买价最多比永续买一贵多少
+  max_slice_eth: 0.5            # 每张买单最多多少 ETH(约 1,200 USDT @2440);1 万总资金约 4-5 张单
+  requote_bps: 5                # 挂单价和应挂价格差多少才重挂
+  requote_min_interval_s: 3
+  max_order_age_s: 300
+  margin_buffer: 0.10           # 开空保证金多留 10%
+  poll_s: 1.0
+
+sell:                           # P3:你在 OSL 卖,程序同步平空
+  chunk_eth: 2.0                # 剩余超过这个数时,建议分笔卖
+  order: sell_first             # sell_first(先卖后平)| close_first(先平后卖)
+  confirm_big_input_eth: 0.1
+
+risk:
+  stale_s: 5                    # 行情超过几秒拿不到就撤单
+  max_unhedged_eth: 0.005
+  max_unhedged_s: 10
+  max_hedge_failures: 3
+  max_postonly_rejects: 5
+  min_margin_ratio: 3.0
